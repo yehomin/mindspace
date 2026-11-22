@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindSpace | 마음을 더 깊이 이해하고 조화롭게 가꾸는 공간</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Pretendard Font -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgMain: '#F8FAFC',
+                        surface: '#FFFFFF',
+                        slateDark: '#0F172A',
+                        slateBody: '#334155',
+                        slateMuted: '#64748B',
+                        slateBorder: '#E2E8F0',
+                        indigoPrimary: '#4F46E5',
+                        indigoHover: '#4338CA',
+                        indigoSoft: '#EEF2FF',
+                        tealAccent: '#0D9488',
+                        tealSoft: '#CCFBF1',
+                    },
+                    fontFamily: {
+                        sans: ['"Pretendard"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', '"Segoe UI"', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F8FAFC;
+            color: #0F172A;
+            font-family: 'Pretendard', sans-serif;
+            letter-spacing: -0.025em;
+            line-height: 1.65;
+            word-break: keep-all;
+        }
+
+        /* Clean UI Utilities */
+        .glass-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 1rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        
+        .glass-card:hover {
+            border-color: #CBD5E1;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04);
+        }
+
+        .tab-btn.active {
+            color: #4F46E5;
+            background-color: #EEF2FF;
+            font-weight: 600;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F8FAFC;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-indigoSoft selection:text-indigoPrimary">
+
+    <!-- NAVIGATION BAR -->
+    <header class="sticky top-0 z-40 bg-surface/90 backdrop-blur-md border-b border-slateBorder">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            
+            <!-- Brand Logo -->
+            <a href="#" onclick="switchTab('home')" class="flex items-center gap-2.5 group">
+                <div class="w-9 h-9 rounded-xl bg-indigoPrimary text-white flex items-center justify-center font-bold text-lg shadow-sm group-hover:bg-indigoHover transition">
+                    M
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-lg font-bold tracking-tight text-slateDark leading-none">MindSpace</span>
+                    <span class="text-[11px] text-slateMuted font-medium mt-0.5">디지털 심리 플랫폼</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Tabs -->
+            <nav class="hidden md:flex items-center gap-1 bg-bgMain p-1 rounded-xl border border-slateBorder text-xs">
+                <button onclick="switchTab('home')" id="tab-nav-home" class="tab-btn active px-4 py-2 rounded-lg text-slateMuted hover:text-slateDark transition">홈</button>
+                <button onclick="switchTab('assessment')" id="tab-nav-assessment" class="tab-btn px-4 py-2 rounded-lg text-slateMuted hover:text-slateDark transition">자가진단</button>
+                <button onclick="switchTab('diary')" id="tab-nav-diary" class="tab-btn px-4 py-2 rounded-lg text-slateMuted hover:text-slateDark transition">감정일지</button>
+                <button onclick="switchTab('articles')" id="tab-nav-articles" class="tab-btn px-4 py-2 rounded-lg text-slateMuted hover:text-slateDark transition">심리컬럼</button>
+                <button onclick="switchTab('consultation')" id="tab-nav-consultation" class="tab-btn px-4 py-2 rounded-lg text-slateMuted hover:text-slateDark transition">상담예약</button>
+            </nav>
+
+            <!-- Quick Action Button -->
+            <div class="hidden sm:flex items-center gap-3">
+                <button onclick="switchTab('consultation')" class="px-4 py-2 rounded-xl bg-indigoPrimary hover:bg-indigoHover text-white text-xs font-semibold shadow-sm transition">
+                    상담 예약하기
+                </button>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-slateDark hover:text-indigoPrimary">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden border-b border-slateBorder bg-surface px-6 py-4 space-y-2 text-sm font-medium">
+            <button onclick="switchTab('home'); toggleMobileMenu();" class="block w-full text-left py-2 text-slateDark hover:text-indigoPrimary">홈</button>
+            <button onclick="switchTab('assessment'); toggleMobileMenu();" class="block w-full text-left py-2 text-slateDark hover:text-indigoPrimary">자가진단</button>
+            <button onclick="switchTab('diary'); toggleMobileMenu();" class="block w-full text-left py-2 text-slateDark hover:text-indigoPrimary">감정일지</button>
+            <button onclick="switchTab('articles'); toggleMobileMenu();" class="block w-full text-left py-2 text-slateDark hover:text-indigoPrimary">심리컬럼</button>
+            <button onclick="switchTab('consultation'); toggleMobileMenu();" class="block w-full text-left py-2 text-slateDark hover:text-indigoPrimary">상담예약</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-6 py-8">
+
+        <!-- ================= TAB 1: HOME ================= -->
+        <section id="tab-content-home" class="space-y-12">
+            <!-- Hero Banner -->
+            <div class="glass-card p-8 sm:p-12 bg-gradient-to-br from-surface via-surface to-indigoSoft/40 relative overflow-hidden">
+                <div class="max-w-2xl space-y-5">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tealSoft text-tealAccent text-xs font-semibold">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span>마음 건강 케어 웰니스 서비스</span>
+                    </span>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slateDark leading-tight tracking-tight">
+                        마음을 더 깊이 이해하고<br>조화롭게 가꾸는 공간
+                    </h1>
+                    <p class="text-slateBody text-sm sm:text-base leading-relaxed">
+                        MindSpace는 임상 심리학 이론과 수용전념치료(ACT)에 기반하여 스스로 마음 상태를 점검하고, 감정을 세밀하게 기록하며, 검증된 아티클을 제공하는 솔루션입니다.
+                    </p>
+                    <div class="pt-2 flex flex-wrap items-center gap-3">
+                        <button onclick="switchTab('assessment')" class="px-5 py-3 rounded-xl bg-indigoPrimary hover:bg-indigoHover text-white text-xs font-semibold transition flex items-center gap-2 shadow-sm">
+                            <span>스트레스 자가진단</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="switchTab('diary')" class="px-5 py-3 rounded-xl bg-surface border border-slateBorder hover:border-indigoPrimary text-slateDark text-xs font-semibold transition">
+                            오늘의 감정 기록하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Access Modules -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                <div onclick="switchTab('assessment')" class="glass-card p-6 cursor-pointer hover:border-indigoPrimary transition group">
+                    <div class="w-10 h-10 rounded-xl bg-indigoSoft text-indigoPrimary flex items-center justify-center mb-4 group-hover:scale-105 transition">
+                        <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-bold text-slateDark text-base mb-1">자가진단</h3>
+                    <p class="text-xs text-slateMuted leading-relaxed">5문항 척도로 빠르게 체크하는 나의 스트레스 수치</p>
+                </div>
+
+                <div onclick="switchTab('diary')" class="glass-card p-6 cursor-pointer hover:border-indigoPrimary transition group">
+                    <div class="w-10 h-10 rounded-xl bg-tealSoft text-tealAccent flex items-center justify-center mb-4 group-hover:scale-105 transition">
+                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-bold text-slateDark text-base mb-1">감정일지</h3>
+                    <p class="text-xs text-slateMuted leading-relaxed">세밀한 감정 단어 태그로 정돈하는 마음 기록</p>
+                </div>
+
+                <div onclick="switchTab('articles')" class="glass-card p-6 cursor-pointer hover:border-indigoPrimary transition group">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4 group-hover:scale-105 transition">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-bold text-slateDark text-base mb-1">심리컬럼</h3>
+                    <p class="text-xs text-slateMuted leading-relaxed">인간관계, 번아웃, 자기자비를 다루는 칼럼 읽기</p>
+                </div>
+
+                <div onclick="switchTab('consultation')" class="glass-card p-6 cursor-pointer hover:border-indigoPrimary transition group">
+                    <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4 group-hover:scale-105 transition">
+                        <i data-lucide="user-check" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-bold text-slateDark text-base mb-1">상담예약</h3>
+                    <p class="text-xs text-slateMuted leading-relaxed">전문 심리상담사와 1:1 맞춤 상담 신청</p>
+                </div>
+            </div>
+
+            <!-- Today's Mind Quote Widget -->
+            <div class="glass-card p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 bg-slateDark text-white">
+                <div class="space-y-2 max-w-3xl">
+                    <div class="flex items-center gap-2 text-xs font-semibold text-tealAccent">
+                        <i data-lucide="quote" class="w-4 h-4"></i>
+                        <span>오늘의 심리 명언 & 성찰</span>
+                    </div>
+                    <p id="quote-text" class="text-base sm:text-lg font-medium leading-relaxed">
+                        "당신이 느끼는 모든 감정은 잘못된 것이 아닙니다. 그것은 단지 내 마음이 지금 무언가를 알리려 한다는 신호일 뿐입니다."
+                    </p>
+                    <span id="quote-author" class="text-xs text-slateMuted block">— 알프레드 아들러</span>
+                </div>
+                <button onclick="refreshQuote()" class="shrink-0 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition flex items-center gap-2 border border-slate-700">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    <span>다른 명언 보기</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= TAB 2: ASSESSMENT (자가진단) ================= -->
+        <section id="tab-content-assessment" class="hidden max-w-3xl mx-auto space-y-8">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold text-indigoPrimary uppercase tracking-wider">Self Assessment</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark">스트레스 & 불안 자가진단</h2>
+                <p class="text-xs sm:text-sm text-slateMuted">지난 일주일 동안 느꼈던 경험에 맞춰 가장 가까운 점수를 선택해 주세요. (5문항)</p>
+            </div>
+
+            <!-- Assessment Quiz Card -->
+            <div class="glass-card p-6 sm:p-8 space-y-8">
+                
+                <!-- Progress Bar -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs text-slateMuted font-medium">
+                        <span>진행률</span>
+                        <span id="quiz-progress-text">0 / 5 선택 완료</span>
+                    </div>
+                    <div class="w-full bg-slateBorder h-2 rounded-full overflow-hidden">
+                        <div id="quiz-progress-bar" class="bg-indigoPrimary h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <!-- Questions List -->
+                <div class="space-y-8" id="quiz-questions-list">
+                    <!-- Q1 -->
+                    <div class="space-y-3 pb-6 border-b border-slateBorder">
+                        <p class="text-sm font-bold text-slateDark">1. 예상치 못한 일이나 작은 변수로 인해 쉽게 사소한 조바심이나 짜증이 났다.</p>
+                        <div class="grid grid-cols-5 gap-2 text-center text-xs">
+                            <button onclick="setAnswer(1, 0, this)" class="q-btn-1 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">전혀 아니다 (0)</button>
+                            <button onclick="setAnswer(1, 1, this)" class="q-btn-1 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">가끔 그렇다 (1)</button>
+                            <button onclick="setAnswer(1, 2, this)" class="q-btn-1 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">자주 그렇다 (2)</button>
+                            <button onclick="setAnswer(1, 3, this)" class="q-btn-1 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">매우 그렇다 (3)</button>
+                            <button onclick="setAnswer(1, 4, this)" class="q-btn-1 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">항상 그렇다 (4)</button>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="space-y-3 pb-6 border-b border-slateBorder">
+                        <p class="text-sm font-bold text-slateDark">2. 미래에 대한 걱정이나 일어나지 않은 일 때문에 집중력이 떨어지거나 마음이 불안했다.</p>
+                        <div class="grid grid-cols-5 gap-2 text-center text-xs">
+                            <button onclick="setAnswer(2, 0, this)" class="q-btn-2 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">전혀 아니다 (0)</button>
+                            <button onclick="setAnswer(2, 1, this)" class="q-btn-2 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">가끔 그렇다 (1)</button>
+                            <button onclick="setAnswer(2, 2, this)" class="q-btn-2 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">자주 그렇다 (2)</button>
+                            <button onclick="setAnswer(2, 3, this)" class="q-btn-2 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">매우 그렇다 (3)</button>
+                            <button onclick="setAnswer(2, 4, this)" class="q-btn-2 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">항상 그렇다 (4)</button>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="space-y-3 pb-6 border-b border-slateBorder">
+                        <p class="text-sm font-bold text-slateDark">3. 충분한 휴식을 취해도 피로가 쉽게 해소되지 않거나 몸의 긴장감이 지속되었다.</p>
+                        <div class="grid grid-cols-5 gap-2 text-center text-xs">
+                            <button onclick="setAnswer(3, 0, this)" class="q-btn-3 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">전혀 아니다 (0)</button>
+                            <button onclick="setAnswer(3, 1, this)" class="q-btn-3 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">가끔 그렇다 (1)</button>
+                            <button onclick="setAnswer(3, 2, this)" class="q-btn-3 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">자주 그렇다 (2)</button>
+                            <button onclick="setAnswer(3, 3, this)" class="q-btn-3 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">매우 그렇다 (3)</button>
+                            <button onclick="setAnswer(3, 4, this)" class="q-btn-3 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">항상 그렇다 (4)</button>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="space-y-3 pb-6 border-b border-slateBorder">
+                        <p class="text-sm font-bold text-slateDark">4. 타인의 시선이나 평가에 대해 과도하게 신경 쓰이고 유난히 예민하게 반응했다.</p>
+                        <div class="grid grid-cols-5 gap-2 text-center text-xs">
+                            <button onclick="setAnswer(4, 0, this)" class="q-btn-4 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">전혀 아니다 (0)</button>
+                            <button onclick="setAnswer(4, 1, this)" class="q-btn-4 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">가끔 그렇다 (1)</button>
+                            <button onclick="setAnswer(4, 2, this)" class="q-btn-4 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">자주 그렇다 (2)</button>
+                            <button onclick="setAnswer(4, 3, this)" class="q-btn-4 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">매우 그렇다 (3)</button>
+                            <button onclick="setAnswer(4, 4, this)" class="q-btn-4 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">항상 그렇다 (4)</button>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="space-y-3">
+                        <p class="text-sm font-bold text-slateDark">5. 내가 당장 통제할 수 없는 상황 때문에 답답함이나 무력감을 느꼈다.</p>
+                        <div class="grid grid-cols-5 gap-2 text-center text-xs">
+                            <button onclick="setAnswer(5, 0, this)" class="q-btn-5 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">전혀 아니다 (0)</button>
+                            <button onclick="setAnswer(5, 1, this)" class="q-btn-5 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">가끔 그렇다 (1)</button>
+                            <button onclick="setAnswer(5, 2, this)" class="q-btn-5 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">자주 그렇다 (2)</button>
+                            <button onclick="setAnswer(5, 3, this)" class="q-btn-5 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">매우 그렇다 (3)</button>
+                            <button onclick="setAnswer(5, 4, this)" class="q-btn-5 py-2.5 rounded-lg border border-slateBorder hover:border-indigoPrimary transition">항상 그렇다 (4)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="evaluateAssessment()" class="w-full py-3.5 rounded-xl bg-indigoPrimary hover:bg-indigoHover text-white text-xs font-semibold shadow-sm transition">
+                    결과 제출하기
+                </button>
+            </div>
+
+            <!-- Result Box (Hidden by default) -->
+            <div id="assessment-result" class="hidden glass-card p-6 sm:p-8 space-y-6 bg-slateDark text-white">
+                <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+                    <span class="text-xs font-bold text-tealAccent uppercase">진단 결과</span>
+                    <span id="res-score-badge" class="px-3 py-1 rounded-full bg-indigoPrimary text-white text-xs font-bold">12 / 20점</span>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 id="res-title" class="text-xl font-bold">주의가 필요한 스트레스 단계</h3>
+                    <p id="res-desc" class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        현재 일상적인 긴장감과 불안이 누적되어 있는 상태입니다. 마음의 신호에 귀를 기울이고 유연한 휴식을 확보하는 것이 좋습니다.
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
+                    <span class="text-xs font-bold text-tealAccent block">💡 추천 대처 팁:</span>
+                    <p id="res-tip" class="text-xs text-slate-300">
+                        하루 10분 호흡 명상이나, 감정일지 탭을 활용하여 내 마음의 조바심을 글로 써내려가 보세요.
+                    </p>
+                </div>
+
+                <button onclick="resetAssessment()" class="w-full py-2.5 rounded-xl border border-slate-700 hover:bg-slate-800 text-xs text-slate-300 transition">
+                    다시 진단하기
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: MOOD DIARY (감정일지) ================= -->
+        <section id="tab-content-diary" class="hidden max-w-4xl mx-auto space-y-8">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold text-tealAccent uppercase tracking-wider">Mind Tag & Diary</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark">오늘의 감정 세밀 일지</h2>
+                <p class="text-xs sm:text-sm text-slateMuted">모호한 감정에 정확한 이름을 붙여주는 것만으로도 마음의 무게가 줄어듭니다.</p>
+            </div>
+
+            <!-- Emotion Entry Form -->
+            <div class="glass-card p-6 sm:p-8 space-y-6">
+                <!-- Tags Selection -->
+                <div class="space-y-3">
+                    <label class="text-xs font-bold text-slateDark block">1. 지금 내 마음의 결에 가까운 감정 태그 클릭:</label>
+                    <div class="flex flex-wrap gap-2" id="mood-tags-container">
+                        <button onclick="selectMoodTag(this, '알 수 없는 조바심')" class="mood-tag px-3.5 py-2 rounded-xl text-xs font-medium border border-slateBorder bg-bgMain hover:border-indigoPrimary transition">알 수 없는 조바심</button>
+                        <button onclick="selectMoodTag(this, '고요한 평온함')" class="mood-tag px-3.5 py-2 rounded-xl text-xs font-medium border border-slateBorder bg-bgMain hover:border-indigoPrimary transition">고요한 평온함</button>
+                        <button onclick="selectMoodTag(this, '뿌듯한 성취감')" class="mood-tag px-3.5 py-2 rounded-xl text-xs font-medium border border-slateBorder bg-bgMain hover:border-indigoPrimary transition">뿌듯한 성취감</button>
+                        <button onclick="selectMoodTag(this, '답답한 무기력')" class="mood-tag px-3.5 py-2 rounded-xl text-xs font-medium border border-slateBorder bg-bgMain hover:border-indigoPrimary transition">답답한 무기력</button>
+                        <button onclick="selectMoodTag(this, '괜한 쓸쓸함')" class="mood-tag px-3.5 py-2 rounded-xl text-xs font-medium border border-slateBorder bg-bgMain hover:border-indigoPrimary transition">괜한 쓸쓸함</button>
+                        <button onclick="selectMoodTag(this, '설레는 기대감')" class="mood-tag px-3.5 py-2 rounded-xl text-xs font-medium border border-slateBorder bg-bgMain hover:border-indigoPrimary transition">설레는 기대감</button>
+                        <button onclick="selectMoodTag(this, '나만 뒤처진 기분')" class="mood-tag px-3.5 py-2 rounded-xl text-xs font-medium border border-slateBorder bg-bgMain hover:border-indigoPrimary transition">나만 뒤처진 기분</button>
+                    </div>
+                </div>
+
+                <!-- Text Diary Area -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slateDark block">2. 그 감정이 들었던 상황이나 생각 기록하기:</label>
+                    <textarea id="diary-text" rows="4" placeholder="오늘 어떤 일이 있었나요? 혹은 어떤 생각 때문에 이 감정이 들었나요? 솔직하게 작성해보세요." class="w-full p-4 rounded-xl border border-slateBorder bg-bgMain text-xs sm:text-sm focus:outline-none focus:border-indigoPrimary resize-none"></textarea>
+                </div>
+
+                <div class="flex justify-end">
+                    <button onclick="saveDiaryEntry()" class="px-6 py-3 rounded-xl bg-indigoPrimary hover:bg-indigoHover text-white text-xs font-semibold shadow-sm transition">
+                        일지 저장하기
+                    </button>
+                </div>
+            </div>
+
+            <!-- Saved Log Archive -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slateBorder pb-3">
+                    <h3 class="font-bold text-slateDark text-base flex items-center gap-2">
+                        <i data-lucide="archive" class="w-4 h-4 text-slateMuted"></i>
+                        <span>저장된 감정 기록</span>
+                    </h3>
+                    <span class="text-xs text-slateMuted">LocalStorage 자동 저장</span>
+                </div>
+
+                <div id="diary-list" class="space-y-3">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: ARTICLES (심리컬럼) ================= -->
+        <section id="tab-content-articles" class="hidden space-y-8">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold text-indigoPrimary uppercase tracking-wider">Psychology Insights</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark">마음을 비우고 채우는 심리 칼럼</h2>
+                <p class="text-xs sm:text-sm text-slateMuted">전문 심리학 이론과 임상 경험을 바탕으로 쓴 나를 이해하는 아티클입니다.</p>
+            </div>
+
+            <!-- Articles Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="articles-grid-container">
+                <!-- Populated via JS -->
+            </div>
+        </section>
+
+        <!-- ================= TAB 5: CONSULTATION (상담예약) ================= -->
+        <section id="tab-content-consultation" class="hidden max-w-2xl mx-auto space-y-8">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold text-tealAccent uppercase tracking-wider">Professional Support</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slateDark">1:1 심리상담 신청</h2>
+                <p class="text-xs sm:text-sm text-slateMuted">전문 심리상담사와 함께 마음의 문제를 차분히 풀어가세요.</p>
+            </div>
+
+            <div class="glass-card p-6 sm:p-10 space-y-6">
+                <form id="consult-form" onsubmit="handleConsultSubmit(event)" class="space-y-5">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slateDark block">성함 / 닉네임</label>
+                        <input type="text" id="consult-name" required placeholder="예: 김민우" class="w-full px-4 py-3 rounded-xl border border-slateBorder bg-bgMain text-xs sm:text-sm focus:outline-none focus:border-indigoPrimary">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slateDark block">연락처 (전화번호 또는 이메일)</label>
+                        <input type="text" id="consult-contact" required placeholder="예: 010-1234-5678 또는 example@email.com" class="w-full px-4 py-3 rounded-xl border border-slateBorder bg-bgMain text-xs sm:text-sm focus:outline-none focus:border-indigoPrimary">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slateDark block">상담 분야 선택</label>
+                            <select id="consult-category" class="w-full px-4 py-3 rounded-xl border border-slateBorder bg-bgMain text-xs sm:text-sm focus:outline-none focus:border-indigoPrimary">
+                                <option value="대인관계 및 소통">대인관계 및 소통</option>
+                                <option value="번아웃 및 직장 스트레스">번아웃 및 직장 스트레스</option>
+                                <option value="불안 및 우울 케어">불안 및 우울 케어</option>
+                                <option value="자아존중감 및 자기이해">자아존중감 및 자기이해</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slateDark block">상담 방식</label>
+                            <select id="consult-type" class="w-full px-4 py-3 rounded-xl border border-slateBorder bg-bgMain text-xs sm:text-sm focus:outline-none focus:border-indigoPrimary">
+                                <option value="비대면 화상 상담">비대면 화상 상담</option>
+                                <option value="대면 센터 방문 상담">대면 센터 방문 상담</option>
+                                <option value="텍스트/음성 전용 상담">텍스트/음성 전용 상담</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slateDark block">간단한 고민 요약 (선택)</label>
+                        <textarea id="consult-memo" rows="3" placeholder="상담사에게 미리 알리고 싶은 고민이 있다면 적어주세요." class="w-full p-4 rounded-xl border border-slateBorder bg-bgMain text-xs sm:text-sm focus:outline-none focus:border-indigoPrimary resize-none"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-indigoPrimary hover:bg-indigoHover text-white text-xs font-semibold shadow-sm transition">
+                        상담 신청 접수하기
+                    </button>
+                </form>
+
+                <!-- Feedback Message -->
+                <div id="consult-success" class="hidden p-6 rounded-xl bg-tealSoft border border-tealAccent/30 text-teal-900 text-center space-y-2">
+                    <div class="w-10 h-10 rounded-full bg-tealAccent text-white flex items-center justify-center mx-auto mb-2">
+                        <i data-lucide="check" class="w-6 h-6"></i>
+                    </div>
+                    <h4 class="font-bold text-base">상담 신청이 완료되었습니다!</h4>
+                    <p class="text-xs text-teal-800 leading-relaxed">
+                        작성해 주신 연락처로 24시간 이내에 담당 상담사가 직접 일정 확인 연락을 드립니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slateBorder bg-surface py-10">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slateMuted">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-slateDark text-sm">MindSpace</span>
+                <span>© 2026 MindSpace All rights reserved.</span>
+            </div>
+            <p class="text-center md:text-right">본 플랫폼의 콘텐츠는 정서적 도움을 주는 심리 조언이며 전문 의학적 진단을 대신하지 않습니다.</p>
+        </div>
+    </footer>
+
+    <!-- ARTICLE READER MODAL -->
+    <div id="article-modal" class="fixed inset-0 z-50 hidden bg-slateDark/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-surface w-full max-w-2xl rounded-2xl border border-slateBorder shadow-xl p-6 sm:p-10 space-y-6 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-start border-b border-slateBorder pb-4">
+                <div class="space-y-1">
+                    <span id="modal-cat" class="text-xs font-bold text-indigoPrimary uppercase">카테고리</span>
+                    <h3 id="modal-title" class="text-xl sm:text-2xl font-bold text-slateDark">아티클 제목</h3>
+                </div>
+                <button onclick="closeArticleModal()" class="text-slateMuted hover:text-slateDark p-1">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div id="modal-body" class="text-xs sm:text-sm text-slateBody leading-relaxed space-y-4">
+                <!-- Article Content populated via JS -->
+            </div>
+
+            <div class="pt-4 border-t border-slateBorder flex justify-end">
+                <button onclick="closeArticleModal()" class="px-5 py-2 rounded-xl bg-slateDark text-white text-xs font-medium hover:bg-slate-800 transition">
+                    닫기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        lucide.createIcons();
+
+        // TAB SWITCHING SYSTEM
+        function switchTab(tabId) {
+            const tabs = ['home', 'assessment', 'diary', 'articles', 'consultation'];
+            
+            tabs.forEach(t => {
+                const content = document.getElementById(`tab-content-${t}`);
+                const navBtn = document.getElementById(`tab-nav-${t}`);
+                
+                if (t === tabId) {
+                    content?.classList.remove('hidden');
+                    navBtn?.classList.add('active');
+                } else {
+                    content?.classList.add('hidden');
+                    navBtn?.classList.remove('active');
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        // QUOTE WIDGET DATA
+        const quotes = [
+            { text: "당신이 느끼는 모든 감정은 잘못된 것이 아닙니다. 그것은 단지 내 마음이 지금 무언가를 알리려 한다는 신호일 뿐입니다.", author: "— 알프레드 아들러" },
+            { text: "자신을 온전히 받아들이는 자만이 비로소 타인을 깊이 받아들일 수 있다.", author: "— 칼 로저스" },
+            { text: "자극과 반응 사이에는 공간이 있다. 그 공간에 반응을 선택할 수 있는 우리의 자유와 힘이 있다.", author: "— 빅터 프랭클" },
+            { text: "마음의 평화는 외부 상황이 정돈될 때가 아니라, 내가 내 마음을 있는 그대로 인정할 때 온다.", author: "— 수용전념치료(ACT)" }
+        ];
+
+        function refreshQuote() {
+            const rand = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('quote-text').innerText = `"${rand.text}"`;
+            document.getElementById('quote-author').innerText = rand.author;
+        }
+
+        // ASSESSMENT QUIZ LOGIC
+        const answers = { 1: -1, 2: -1, 3: -1, 4: -1, 5: -1 };
+
+        function setAnswer(qNum, val, btn) {
+            answers[qNum] = val;
+            
+            // Highlight selected button
+            document.querySelectorAll(`.q-btn-${qNum}`).forEach(b => {
+                b.classList.remove('bg-indigoPrimary', 'text-white', 'border-indigoPrimary');
+                b.classList.add('border-slateBorder');
+            });
+            btn.classList.remove('border-slateBorder');
+            btn.classList.add('bg-indigoPrimary', 'text-white', 'border-indigoPrimary');
+
+            // Update Progress
+            const answeredCount = Object.values(answers).filter(v => v !== -1).length;
+            document.getElementById('quiz-progress-text').innerText = `${answeredCount} / 5 선택 완료`;
+            document.getElementById('quiz-progress-bar').style.width = `${(answeredCount / 5) * 100}%`;
+        }
+
+        function evaluateAssessment() {
+            const values = Object.values(answers);
+            if (values.includes(-1)) {
+                alert('모든 문항에 답변을 선택해 주세요.');
+                return;
+            }
+
+            const totalScore = values.reduce((a, b) => a + b, 0);
+            const resultBox = document.getElementById('assessment-result');
+            const scoreBadge = document.getElementById('res-score-badge');
+            const resTitle = document.getElementById('res-title');
+            const resDesc = document.getElementById('res-desc');
+            const resTip = document.getElementById('res-tip');
+
+            scoreBadge.innerText = `${totalScore} / 20점`;
+            resultBox.classList.remove('hidden');
+
+            if (totalScore <= 5) {
+                resTitle.innerText = '안정적 마음 상태';
+                resDesc.innerText = '현재 스트레스 수준이 낮고 비교적 마음의 조화와 균형을 잘 유지하고 계십니다.';
+                resTip.innerText = '지금의 긍정적인 루틴과 호흡 방식을 계속 유지해 보세요.';
+            } else if (totalScore <= 12) {
+                resTitle.innerText = '경미한 스트레스 경고';
+                resDesc.innerText = '일상적인 피로와 사소한 불안이 누적되고 있습니다. 자신을 돌보는 휴식이 필요한 시점입니다.';
+                resTip.innerText = '감정일지 탭을 활용해 내 마음을 괴롭히는 조바심에 이름을 붙여 적어보세요.';
+            } else {
+                resTitle.innerText = '고도 스트레스 케어 필요';
+                resDesc.innerText = '현재 상당한 긴장감과 불안이 마음을 지배하고 있습니다. 혼자 참기보다 전문적인 케어가 도움이 됩니다.';
+                resTip.innerText = '1:1 심리상담 탭을 이용해 전문가와의 대화를 고려해 보시는 것을 추천합니다.';
+            }
+
+            resultBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetAssessment() {
+            for (let i = 1; i <= 5; i++) answers[i] = -1;
+            document.querySelectorAll('#quiz-questions-list button').forEach(b => {
+                b.classList.remove('bg-indigoPrimary', 'text-white', 'border-indigoPrimary');
+                b.classList.add('border-slateBorder');
+            });
+            document.getElementById('quiz-progress-text').innerText = '0 / 5 선택 완료';
+            document.getElementById('quiz-progress-bar').style.width = '0%';
+            document.getElementById('assessment-result').classList.add('hidden');
+        }
+
+        // MOOD DIARY LOGIC
+        let activeTag = '';
+
+        function selectMoodTag(btn, tag) {
+            document.querySelectorAll('.mood-tag').forEach(t => {
+                t.classList.remove('bg-indigoPrimary', 'text-white', 'border-indigoPrimary');
+                t.classList.add('bg-bgMain', 'border-slateBorder');
+            });
+            btn.classList.remove('bg-bgMain', 'border-slateBorder');
+            btn.classList.add('bg-indigoPrimary', 'text-white', 'border-indigoPrimary');
+            activeTag = tag;
+        }
+
+        function saveDiaryEntry() {
+            const text = document.getElementById('diary-text').value.trim();
+            if (!activeTag) {
+                alert('감정 태그를 하나 선택해 주세요.');
+                return;
+            }
+            if (!text) {
+                alert('일지 내용을 작성해 주세요.');
+                return;
+            }
+
+            const entries = JSON.parse(localStorage.getItem('ms_diary_entries') || '[]');
+            entries.unshift({
+                id: Date.now(),
+                tag: activeTag,
+                text,
+                date: new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            });
+
+            localStorage.setItem('ms_diary_entries', JSON.stringify(entries));
+            document.getElementById('diary-text').value = '';
+            renderDiaryEntries();
+        }
+
+        function deleteDiaryEntry(id) {
+            let entries = JSON.parse(localStorage.getItem('ms_diary_entries') || '[]');
+            entries = entries.filter(e => e.id !== id);
+            localStorage.setItem('ms_diary_entries', JSON.stringify(entries));
+            renderDiaryEntries();
+        }
+
+        function renderDiaryEntries() {
+            const container = document.getElementById('diary-list');
+            const entries = JSON.parse(localStorage.getItem('ms_diary_entries') || '[]');
+
+            if (entries.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-xs text-slateMuted bg-surface rounded-xl border border-slateBorder">아직 저장된 감정 일지가 없습니다.</div>`;
+                return;
+            }
+
+            container.innerHTML = entries.map(e => `
+                <div class="glass-card p-4 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded-lg bg-indigoSoft text-indigoPrimary font-semibold text-xs">${e.tag}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[11px] text-slateMuted">${e.date}</span>
+                            <button onclick="deleteDiaryEntry(${e.id})" class="text-slateMuted hover:text-rose-500 p-1">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slateBody leading-relaxed">${e.text}</p>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // ARTICLES DATA
+        const articlesList = [
+            {
+                id: '1',
+                cat: '인간관계',
+                title: '타인과의 건강한 경계선(Boundary)을 세우는 방법',
+                desc: '상대방의 부탁을 거절할 때 죄책감을 느낀다면, 심리적 경계선이 무너져 있다는 신호입니다.',
+                time: '읽는 시간 3분',
+                body: `
+                    <p>심리학에서 '경계선(Boundary)'이란 나 자신의 감정과 타인의 감정을 명확히 구분하는 안전 지대입니다.</p>
+                    <p><strong>1. 나의 한계 인정하기</strong><br>내가 수용할 수 있는 시간과 에너지의 한계를 먼저 파악하세요.</p>
+                    <p><strong>2. 거절은 사람에 대한 거부가 아닙니다</strong><br>상대방의 요청을 거절하는 것은 그 사람을 부정하는 것이 아니라, 내 상황을 솔직하게 표현하는 건강한 소통입니다.</p>
+                `
+            },
+            {
+                id: '2',
+                cat: '번아웃 케어',
+                title: '열심히 사는데 왜 열정이 사라질까: 번아웃 탈출법',
+                desc: '휴식을 취해도 뇌의 피로가 해소되지 않는다면 적극적 에너지 충전 루틴이 필요합니다.',
+                time: '읽는 시간 4분',
+                body: `
+                    <p>번아웃은 단지 일을 많이 해서 생기는 것이 아니라, '내적 가치'와 '실제 행동' 간의 불일치에서 발생합니다.</p>
+                    <p><strong>1. 수동적 휴식 vs 능동적 휴식</strong><br>스마트폰을 보며 누워있는 것보다, 10분 산책이나 손으로 만드는 취미 활동이 뇌 회복에 훨씬 효과적입니다.</p>
+                    <p><strong>2. 통제할 수 없는 일 내려놓기</strong><br>결과나 타인의 반응 대신, 내가 통제할 수 있는 과정에 집중하세요.</p>
+                `
+            },
+            {
+                id: '3',
+                cat: '자기이해',
+                title: '완벽주의라는 가면과 자기자비(Self-Compassion)',
+                excerpt: '작은 실수에도 스스로를 강하게 채찍질하고 있다면 자기자비 연습이 필요합니다.',
+                time: '읽는 시간 3분',
+                body: `
+                    <p>실수에 지나치게 엄격한 '부적응적 완벽주의'는 시작 자체를 두려워하게 만듭니다.</p>
+                    <p>친한 친구가 실수했을 때 따뜻한 위로를 건네듯, 나 자신에게도 따뜻한 언어를 건네는 연습(Self-Talk)을 시작해보세요.</p>
+                `
+            }
+        ];
+
+        function renderArticles() {
+            const container = document.getElementById('articles-grid-container');
+            container.innerHTML = articlesList.map(a => `
+                <div class="glass-card p-6 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="px-2 py-0.5 rounded bg-tealSoft text-tealAccent font-bold">${a.cat}</span>
+                            <span class="text-slateMuted">${a.time}</span>
+                        </div>
+                        <h3 class="font-bold text-slateDark text-base hover:text-indigoPrimary cursor-pointer transition" onclick="openArticleModal('${a.id}')">
+                            ${a.title}
+                        </h3>
+                        <p class="text-xs text-slateMuted leading-relaxed">${a.desc}</p>
+                    </div>
+                    <button onclick="openArticleModal('${a.id}')" class="w-full py-2.5 rounded-xl border border-slateBorder hover:border-indigoPrimary text-slateDark hover:text-indigoPrimary text-xs font-semibold transition">
+                        칼럼 읽기
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function openArticleModal(id) {
+            const article = articlesList.find(a => a.id === id);
+            if (!article) return;
+
+            document.getElementById('modal-cat').innerText = article.cat;
+            document.getElementById('modal-title').innerText = article.title;
+            document.getElementById('modal-body').innerHTML = article.body;
+            document.getElementById('article-modal').classList.remove('hidden');
+        }
+
+        function closeArticleModal() {
+            document.getElementById('article-modal').classList.add('hidden');
+        }
+
+        // CONSULTATION FORM LOGIC
+        function handleConsultSubmit(e) {
+            e.preventDefault();
+            document.getElementById('consult-form').classList.add('hidden');
+            document.getElementById('consult-success').classList.remove('hidden');
+        }
+
+        // INIT ON LOAD
+        window.onload = function() {
+            renderDiaryEntries();
+            renderArticles();
+        }
+    </script>
+</body>
+</html>
